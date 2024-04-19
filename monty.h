@@ -1,11 +1,20 @@
-#ifndef MONTY_H
-#define MONTY_H
+#ifndef __MONTY_H__
+#define __MONTY_H__
 
-#include <stdlib.h>
+
 #include <stdio.h>
-#include <ctype.h>
-#include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
+
+
+#define STACK 0
+#define QUEUE 1
+#define DELIMS " \n\t\a\b"
+
+
+/* GLOBAL OPCODE TOKENS */
+extern char **op_toks;
+
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -16,80 +25,63 @@
  * Description: doubly linked list node structure
  * for stack, queues, LIFO, FIFO Holberton project
  */
-
 typedef struct stack_s
 {
 	int n;
 	struct stack_s *prev;
 	struct stack_s *next;
 } stack_t;
+
+
 /**
- * struct instruction_s - opcoode and its function
+ * struct instruction_s - opcode and its function
  * @opcode: the opcode
  * @f: function to handle the opcode
  *
  * Description: opcode and its function
  * for stack, queues, LIFO, FIFO Holberton project
  */
-
 typedef struct instruction_s
 {
 	char *opcode;
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
-/**
- * struct dlist_s - The global structure to hold data
- * @size: size of double linked list
- * @head: pointer to the head of double linked list
- * @tail: pointer to the tail of double linked list
- */
 
-typedef struct mlist_s
-{
-	size_t size;
-	unsigned int ln;
-	stack_t *head;
-	stack_t *tail;
-	FILE *fd;
-	void *buffer;
-	int intarg;
-	int mode;
-} mlist_t;
 
-extern mlist_t gs;
+/* PRIMARY INTERPRETER FUNCTIONS */
+void free_stack(stack_t **stack);
+int init_stack(stack_t **stack);
+int check_mode(stack_t *stack);
+void free_tokens(void);
+unsigned int token_arr_len(void);
+int run_monty(FILE *script_fd);
+void set_op_tok_error(int error_code);
 
-/* opcode.c */
-int chk_int(const char *argint);
-int run_opcode(char *buf);
-void nop(stack_t **stack, unsigned int data);
-void myexit(int code, char *string);
 
-/* monty_list.c */
-void mlist_init(void);
-void mlist_destroy(void);
-int mlist_ins_end(const int data);
-int mlist_ins_beg(const int data);
-int mlist_remove(stack_t *node);
+/* OPCODE FUNCTIONS */
+void monty_push(stack_t **stack, unsigned int line_number);
+void monty_pall(stack_t **stack, unsigned int line_number);
+void monty_pint(stack_t **stack, unsigned int line_number);
+void monty_pop(stack_t **stack, unsigned int line_number);
+void monty_swap(stack_t **stack, unsigned int line_number);
+void monty_add(stack_t **stack, unsigned int line_number);
+void monty_nop(stack_t **stack, unsigned int line_number);
+void monty_sub(stack_t **stack, unsigned int line_number);
+void monty_div(stack_t **stack, unsigned int line_number);
+void monty_mul(stack_t **stack, unsigned int line_number);
+void monty_mod(stack_t **stack, unsigned int line_number);
+void monty_pchar(stack_t **stack, unsigned int line_number);
+void monty_pstr(stack_t **stack, unsigned int line_number);
+void monty_rotl(stack_t **stack, unsigned int line_number);
+void monty_rotr(stack_t **stack, unsigned int line_number);
+void monty_stack(stack_t **stack, unsigned int line_number);
+void monty_queue(stack_t **stack, unsigned int line_number);
 
-/* matths_func.c */
-void _mod(stack_t **head, unsigned int data);
-void _mul(stack_t **head, unsigned int data);
-void _add(stack_t **head, unsigned int data);
-void _sub(stack_t **head, unsigned int data);
-void _div(stack_t **head, unsigned int data);
 
-/* functions.c */
-void swap(stack_t **stack, unsigned int data);
-void push(stack_t **stack, unsigned int data);
-void pint(stack_t **stack, unsigned int data);
-void pop(stack_t **stack, unsigned int data);
-void pall(stack_t **stack, unsigned int data);
+/* CUSTOM STANDARD LIBRARY FUNCTIONS */
+char **strtow(char *str, char *delims);
+char *get_int(int n);
 
-/* third_fun.c */
-void pstr(stack_t **head, unsigned int data);
-void rotl(stack_t **head, unsigned int data);
-void rotr(stack_t **head, unsigned int data);
-void chgmode(stack_t **head, unsigned int data);
-void pchar(stack_t **head, unsigned int data);
 
-#endif /* MONTY_H */
+/* ERROR MESSAGES & ERROR CODES */
+
